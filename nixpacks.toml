@@ -1,3 +1,4 @@
 # Tell Nixpacks this is a Laravel app (document root = public/)
 [variables]
 NIXPACKS_PHP_ROOT_DIR = "/app/public"
+NIXPACKS_NODE_VERSION = "22"
