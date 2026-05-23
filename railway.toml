@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+buildCommand = "npm ci && npm run build"
+
+[deploy]
+startCommand = "chmod +x ./railway/start.sh && ./railway/start.sh"
+healthcheckPath = "/up"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
