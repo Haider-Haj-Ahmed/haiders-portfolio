@@ -876,10 +876,6 @@ section{position:relative;z-index:1}
   .contact-left,.contact-right{padding:32px 24px}
   .contact-heading{font-size:clamp(26px,6vw,40px)}
   .contact-sub{font-size:14px}
-  .orb-1 {
-  right: -40vw !important;   /* bring it more into view */
-  opacity: 0.35;
-}
 
   /* footer */
   .footer-inner{flex-direction:column;align-items:flex-start;gap:10px}
@@ -903,14 +899,13 @@ section{position:relative;z-index:1}
   .hero-sub{font-size:13.5px;margin-bottom:28px}
   .hero-btns{flex-direction:column;width:100%;gap:10px}
   .btn-purple,.btn-ghost{width:100%;justify-content:center;padding:13px 20px;font-size:14px}
-  .hero-stats{justify-content:center;gap:20px;width:auto;margin-top:28px}
+  .hero-stats{justify-content:space-between;gap:0;width:100%;margin-top:28px}
   .hero-stat{flex:1;text-align:center}
   .hero-stat-num{font-size:22px}
   .hero-stat-label{font-size:10px}
   .code-card{border-radius:14px}
   .code-body{font-size:10.5px;padding:14px 16px;line-height:1.75}
   .code-card-bar{padding:10px 14px}
-  .code-card-wrap{padding:0 4px}
   .cc-filename{font-size:9px}
 
   /* sections spacing */
