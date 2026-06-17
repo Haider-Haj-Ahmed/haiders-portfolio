@@ -543,7 +543,7 @@
         <div class="footer-social">
             <a href="https://instagram.com/2o.xvi" target="_blank"><i class="fab fa-instagram"></i></a>
         </div>
-        <p class="footer-copy">© 2026 — Precision Aesthetic & Dental Craft · Homs, Syria<br>Developed by <a href="https://haideralhajahmed.vercel.app" target="_blank">Haider Al-Haj Ahmed</a></p>
+        <p class="footer-copy">© 2026 — Precision Aesthetic & Dental Craft · Homs, Syria<br>Developed by <a href="https://haj-ahmed.up.railway.app/corporate-haider" target="_blank">Haider Al-Haj Ahmed</a></p>
     </div>
 </footer>
 
