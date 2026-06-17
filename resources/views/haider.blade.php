@@ -40,14 +40,16 @@
 
 /* ── Reset ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;font-size:16px}
+/* FIX 1: overflow-x:hidden on both html AND body to prevent document-level horizontal scroll */
+html{scroll-behavior:smooth;font-size:16px;overflow-x:hidden}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 img{display:block;max-width:100%}
 button{font-family:var(--sans);cursor:pointer;border:none;background:none}
 
 /* ── Layout ── */
-.container{width:100%;max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+/* FIX 2: container must never exceed viewport width */
+.container{width:100%;max-width:var(--max);margin:0 auto;padding:0 var(--pad);box-sizing:border-box}
 
 /* ── Scrollbar ── */
 ::-webkit-scrollbar{width:3px}
@@ -263,7 +265,8 @@ section{position:relative;z-index:1}
 .cc-dots span:nth-child(2){background:#febc2e}
 .cc-dots span:nth-child(3){background:#28c840}
 .cc-filename{font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:6px}
-.code-body{padding:22px 24px;font-family:var(--mono);font-size:12.5px;line-height:1.9;white-space:pre;overflow-x:auto}
+/* FIX 3: white-space:pre-wrap prevents horizontal overflow from long code lines on mobile */
+.code-body{padding:22px 24px;font-family:var(--mono);font-size:12.5px;line-height:1.9;white-space:pre-wrap;word-break:break-word;overflow-x:hidden}
 .ck{color:#c792ea}.cs{color:#c3e88d}.cf{color:#82aaff}.cm{color:#546e7a;font-style:italic}.cv{color:#f8f8f2}.cn{color:#ffcb6b}
 .code-footer{
   border-top:1px solid var(--border);padding:12px 18px;
@@ -594,7 +597,7 @@ section{position:relative;z-index:1}
   border-bottom:1px solid var(--border);
 }
 .term-title{font-family:var(--mono);font-size:11px;color:var(--text3);margin-left:8px}
-.term-body{padding:20px;min-height:280px;max-height:360px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.2) transparent}
+.term-body{padding:20px;min-height:280px;max-height:360px;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(139,92,246,.2) transparent}
 #term-out{margin-bottom:12px;line-height:2;word-break:break-word}
 #term-out p{animation:tLine .15s ease}
 @keyframes tLine{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
@@ -804,6 +807,7 @@ section{position:relative;z-index:1}
 ═══════════════════════════════════════════════ */
 @media(max-width:768px){
   :root{--pad:18px}
+  /* FIX 4: on mobile the nav was left:16px + no transform so it stayed anchored left — correct */
   #nav{top:10px;width:calc(100% - 32px);left:16px;transform:none}
   .nav-pill{justify-content:space-between;padding:8px 14px}
   .nav-pill a:not(.nav-cta){display:none}
@@ -812,6 +816,8 @@ section{position:relative;z-index:1}
 
   /* hero */
   #hero{padding:100px var(--pad) 80px}
+  /* FIX 5: hero-inner must not push wider than its container on single-col layout */
+  .hero-inner{width:100%;max-width:100%}
   .hero-title{font-size:clamp(34px,9vw,52px);letter-spacing:-.03em}
   .hero-sub{font-size:14px;line-height:1.7}
   .hero-stats{gap:20px}
@@ -821,10 +827,11 @@ section{position:relative;z-index:1}
   .hero-btns{gap:10px}
   .btn-purple,.btn-ghost{padding:12px 22px;font-size:13px}
 
-  /* code card */
-  .code-card-wrap{width:100%;max-width:420px;margin:0 auto}
+  /* code card — constrain fully on mobile */
+  .code-card-wrap{width:100%;max-width:100%;margin:0 auto}
   .code-card{max-width:100%}
-  .code-body{font-size:11px;padding:16px 18px}
+  /* FIX 6: smaller font + pre-wrap already set globally; reinforce no overflow */
+  .code-body{font-size:11px;padding:16px 18px;overflow-x:hidden}
   .float-badge{display:none}
 
   /* about */
@@ -904,6 +911,7 @@ section{position:relative;z-index:1}
   .hero-stat-num{font-size:22px}
   .hero-stat-label{font-size:10px}
   .code-card{border-radius:14px}
+  /* FIX 7: tighten code card padding on smallest screens, overflow already handled */
   .code-body{font-size:10.5px;padding:14px 16px;line-height:1.75}
   .code-card-bar{padding:10px 14px}
   .cc-filename{font-size:9px}
@@ -1038,16 +1046,16 @@ section{position:relative;z-index:1}
 
 /* ── Code card — prevent blur from compositing layer ── */
 .code-card{
-  /* Override will-change so GPU doesn't rasterize at wrong res */
   will-change:auto;
   -webkit-font-smoothing:antialiased;
   image-rendering:crisp-edges;
-  /* Explicit backface so text stays sharp during tilt */
   backface-visibility:hidden;
   -webkit-backface-visibility:hidden;
+  /* FIX 8: ensure code card never bleeds outside its parent */
+  max-width:100%;
+  overflow:hidden;
 }
 .code-body{
-  /* Prevent sub-pixel text shifting during transform */
   transform:translateZ(0);
   -webkit-font-smoothing:subpixel-antialiased;
 }
@@ -1941,16 +1949,12 @@ window.addEventListener('scroll', parallaxTick, { passive: true });
 
 /* ════════════════════════════════════════
    7. 3D CARD TILT
-   — card lifts forward (translateZ) + inner
-     content slides inward (counter-translate)
-     creating a real depth-parallax illusion
 ════════════════════════════════════════ */
 function initTilt(selector, cfg = {}) {
   if (IS_TOUCH || IS_REDUCED) return;
   const { tilt = 10, lift = 14, useInner = true } = cfg;
 
   document.querySelectorAll(selector).forEach(card => {
-    // Only wrap in tilt-inner when it makes sense (not proof-cell, not code-card)
     let inner = null;
     if (useInner) {
       if (!card.querySelector('.tilt-inner')) {
@@ -1977,7 +1981,6 @@ function initTilt(selector, cfg = {}) {
       card.style.transition = 'box-shadow .15s, border-color .15s';
       card.style.transform  = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateZ(${lift}px)`;
 
-      // Inner slides inward only when useInner is true
       if (inner) {
         inner.style.transition = 'transform .08s linear';
         inner.style.transform  = `translateZ(${lift + 6}px) translate(${dx * -7}px, ${dy * -7}px)`;
@@ -2009,12 +2012,10 @@ function initTilt(selector, cfg = {}) {
   });
 }
 
-// useInner:false → card tilts but content stays flat (no blur, no nested div issues)
 initTilt('.exp-card',         { tilt: 9,  lift: 16, useInner: true  });
 initTilt('.process-card',     { tilt: 8,  lift: 12, useInner: true  });
 initTilt('.skill-group-card', { tilt: 4,  lift: 7,  useInner: true  });
-initTilt('.code-card',        { tilt: 5,  lift: 10, useInner: false }); // no blur on code text
-// proof-cell: pure CSS only — no JS tilt, no inner div, no extra compositing layer
+initTilt('.code-card',        { tilt: 5,  lift: 10, useInner: false });
 
 // Project cards — wider, so gentler tilt
 if (!IS_TOUCH && !IS_REDUCED) {
@@ -2212,8 +2213,6 @@ if (tickerEl) {
   tickerEl.addEventListener('mouseenter', () => { if (track) track.style.animationPlayState = 'paused'; });
   tickerEl.addEventListener('mouseleave', () => { if (track) track.style.animationPlayState = 'running'; });
 }
-
-/* proof-cell hover handled entirely by CSS — no JS needed */
 
 /* ════════════════════════════════════════
    17. CONTACT CHANNELS — icon glow
