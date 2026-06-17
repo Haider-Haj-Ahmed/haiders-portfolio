@@ -1792,7 +1792,7 @@ section{position:relative;z-index:1}
   <div class="container">
     <div class="footer-inner">
       <span class="footer-brand">H.AHA · haideralhajahmed2@gmail.com</span>
-      <span class="footer-copy">© 2025 Haider Al-Haj Ahmed · Built with Laravel & Blade</span>
+      <span class="footer-copy">© 2026 Haider Al-Haj Ahmed · Built with Laravel & Blade</span>
       <div class="footer-links">
         <a href="https://github.com/Haider-Haj-Ahmed" target="_blank">GitHub</a>
         <a href="https://t.me/haider_cz" target="_blank">Telegram</a>
